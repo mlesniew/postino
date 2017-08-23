@@ -15,7 +15,6 @@ def postino(
         cc=[],
         bcc=[],
         fromaddr=[],
-        date=None,
         host='localhost',
         port=25,
         mode=None,
@@ -32,7 +31,6 @@ def postino(
         cc=cc,
         bcc=bcc,
         fromaddr=fromaddr,
-        date=date,
         encoding=encoding,
         encoding_errors=encoding_errors)
 

@@ -1,4 +1,3 @@
-from datetime import datetime
 import email.charset
 import email.header
 import email.mime.multipart
@@ -14,18 +13,6 @@ from .address import parse_addresses
 # Email using utf-7 should use Quoted Printables for non-ascii chars.  This
 # way the message will be at least partially human-readable
 email.charset.add_charset('utf-7', email.charset.QP, email.charset.QP)
-
-
-def parse_date(d):
-    if isinstance(d, datetime):
-        # already a date?
-        return d
-    elif isinstance(d, basestring):
-        timetuple = email.utils.parsedate_tz(d)
-        unixtime = email.utils.mktime_tz(timetuple)
-        return datetime.utcfromtimestamp(unixtime)
-    else:
-        return datetime.utcfromtimestamp(int(d))
 
 
 def encode_header(value, encoding='utf7'):
@@ -86,13 +73,12 @@ def set_headers(
         to=[],
         cc=[],
         bcc=[],
-        fromaddr=[],
-        date=None):
+        fromaddr=[]):
 
     if subject:
         msg['Subject'] = encode_header(subject)
 
-    msg['Date'] = encode_header(email.utils.formatdate(int(date.strftime('%s'))))
+    msg['Date'] = encode_header(email.utils.formatdate(None, True, True))
 
     if to:
         msg['To'] = encode_address_header(to)
@@ -112,7 +98,6 @@ def construct(
         cc=[],
         bcc=[],
         fromaddr=[],
-        date=None,
         encoding=DEFAULT_STR_ENCODING,
         encoding_errors='ignore'):
 
@@ -128,7 +113,6 @@ def construct(
     cc = parse_addresses(cc, encoding, encoding_errors)
     bcc = parse_addresses(bcc, encoding, encoding_errors)
     fromaddr = parse_addresses(fromaddr, encoding, encoding_errors)
-    date = parse_date(date or datetime.utcnow())
 
     # set headers
     set_headers(
@@ -137,8 +121,7 @@ def construct(
         to=to,
         cc=cc,
         bcc=bcc,
-        fromaddr=fromaddr,
-        date=date)
+        fromaddr=fromaddr)
 
     recipients = [email.utils.parseaddr(addr)[1] for addr in to + cc + bcc]
     fromline = ', '.join(email.utils.parseaddr(addr)[1] for addr in fromaddr)
