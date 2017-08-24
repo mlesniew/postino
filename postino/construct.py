@@ -113,6 +113,7 @@ def construct(
     cc = parse_addresses(cc, encoding, encoding_errors)
     bcc = parse_addresses(bcc, encoding, encoding_errors)
     fromaddr = parse_addresses(fromaddr, encoding, encoding_errors)
+    subject = to_unicode(subject, encoding, encoding_errors)
 
     # set headers
     set_headers(
