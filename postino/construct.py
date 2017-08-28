@@ -118,7 +118,7 @@ def construct(
     # set headers
     set_headers(
         msg,
-        subject=subject,
+        subject=subject.replace('\n', ' ').replace('\r', ' '),
         to=to,
         cc=cc,
         bcc=bcc,
