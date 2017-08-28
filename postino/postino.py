@@ -1,13 +1,18 @@
 # coding: utf-8
 import functools
+import os
 
+from .config import load
 from .constants import DEFAULT_STR_ENCODING
 from .constants import DEFAULT_STR_ENCODING_ERRORS
 from .construct import construct
 from .send import send_message
 
 
-def postino(
+CONFIG_PATH = os.path.expanduser(os.environ.get('POSTINO_CONFIG', '~/.postino'))
+
+
+def postino_raw(
         text='',
         html='',
         subject='',
@@ -46,4 +51,18 @@ def postino(
 
 
 def Sender(**kwargs):
-    return functools.partial(postino, **kwargs)
+    return functools.partial(postino_raw, **kwargs)
+
+
+default_sender = None
+
+
+def reload_config(path=CONFIG_PATH):
+    global default_sender
+    default_sender = Sender(**load(path))
+
+
+def postino(*args, **kwargs):
+    if default_sender is None:
+        reload_config()
+    default_sender(*args, **kwargs)
