@@ -5,7 +5,7 @@ from setuptools import setup
 
 setup(
     name='postino',
-    version='0.2',
+    version='0.3',
     description='Easy email sending',
     url='http://github.com/mlesniew/postino',
     author='Michał Leśniewski',
