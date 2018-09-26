@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding: utf-8
 
 import setuptools
@@ -17,4 +17,9 @@ setuptools.setup(
     author_email='mlesniew@gmail.com',
     license='GPLv3',
     packages=['postino'],
-    test_suite='test')
+    test_suite='test',
+    entry_points={
+        'console_scripts': ['postino=postino.__main__:main'],
+        },
+    python_requires='>=3.0'
+    )
