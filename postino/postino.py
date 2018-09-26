@@ -3,8 +3,6 @@ import functools
 import os
 
 from .config import load
-from .constants import DEFAULT_STR_ENCODING
-from .constants import DEFAULT_STR_ENCODING_ERRORS
 from .construct import construct
 from .send import send_message
 
@@ -24,9 +22,7 @@ def postino_raw(
         port=25,
         mode=None,
         login=None,
-        password=None,
-        encoding=DEFAULT_STR_ENCODING,
-        encoding_errors=DEFAULT_STR_ENCODING_ERRORS):
+        password=None):
 
     message, fromline, recipients = construct(
         text=text,
@@ -35,9 +31,7 @@ def postino_raw(
         to=to,
         cc=cc,
         bcc=bcc,
-        fromaddr=fromaddr,
-        encoding=encoding,
-        encoding_errors=encoding_errors)
+        fromaddr=fromaddr)
 
     send_message(
         message,

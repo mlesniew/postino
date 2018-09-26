@@ -4,9 +4,6 @@ import email.mime.multipart
 import email.mime.text
 import email.utils
 
-from .utils import to_unicode
-from .constants import DEFAULT_STR_ENCODING
-from .constants import DEFAULT_STR_ENCODING_ERRORS
 from .address import parse_addresses
 
 
@@ -16,7 +13,7 @@ email.charset.add_charset('utf-7', email.charset.QP, email.charset.QP)
 
 
 def encode_header(value, encoding='utf7'):
-    value = unicode(value)
+    value = str(value)
     try:
         return email.header.Header(value.encode('ascii'))
     except UnicodeError:
@@ -40,14 +37,9 @@ def encode_address_header(addresses):
     return ret
 
 
-def construct_body(
-        text,
-        html,
-        encoding=DEFAULT_STR_ENCODING,
-        encoding_errors=DEFAULT_STR_ENCODING_ERRORS):
+def construct_body(text, html):
 
     def text_part(content, subtype):
-        content = to_unicode(content, encoding, encoding_errors)
         MT = email.mime.text.MIMEText
         try:
             return MT(content.encode('ascii'), subtype, 'ascii')
@@ -97,23 +89,16 @@ def construct(
         to=[],
         cc=[],
         bcc=[],
-        fromaddr=[],
-        encoding=DEFAULT_STR_ENCODING,
-        encoding_errors='ignore'):
+        fromaddr=[]):
 
     # prepare body
-    msg = construct_body(
-        text=text,
-        html=html,
-        encoding=encoding,
-        encoding_errors=encoding_errors)
+    msg = construct_body(text, html)
 
     # parse parameters
-    to = parse_addresses(to, encoding, encoding_errors)
-    cc = parse_addresses(cc, encoding, encoding_errors)
-    bcc = parse_addresses(bcc, encoding, encoding_errors)
-    fromaddr = parse_addresses(fromaddr, encoding, encoding_errors)
-    subject = to_unicode(subject, encoding, encoding_errors)
+    to = parse_addresses(to)
+    cc = parse_addresses(cc)
+    bcc = parse_addresses(bcc)
+    fromaddr = parse_addresses(fromaddr)
 
     # set headers
     set_headers(

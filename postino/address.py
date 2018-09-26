@@ -1,15 +1,13 @@
 import email.utils
 
-from .utils import to_unicode
 
-
-def parse_address(addr, encoding, errors):
+def parse_address(addr):
     if isinstance(addr, tuple):
         if len(addr) != 2:
             raise ValueError('Address tuple should have exactly two elements')
-        addr_tuple = tuple(to_unicode(e, encoding, errors) for e in addr)
-    elif isinstance(addr, basestring):
-        addr_tuple = email.utils.parseaddr(to_unicode(addr, encoding, errors))
+        addr_tuple = tuple(addr)
+    elif isinstance(addr, str):
+        addr_tuple = email.utils.parseaddr(addr)
     else:
         raise ValueError('Email address should be a string or a tuple')
     if not addr_tuple[1]:
@@ -17,16 +15,16 @@ def parse_address(addr, encoding, errors):
     return email.utils.formataddr(addr_tuple)
 
 
-def parse_addresses(addr, encoding, errors):
+def parse_addresses(addr):
     if not addr:
         return []
     elif isinstance(addr, tuple):
-        return [parse_address(addr, encoding, errors)]
-    elif isinstance(addr, basestring):
+        return [parse_address(addr)]
+    elif isinstance(addr, str):
         # the provided parameter is a string
-        address_tuples = email.utils.getaddresses([to_unicode(addr, encoding, errors)])
+        address_tuples = email.utils.getaddresses([addr])
         return [email.utils.formataddr(at) for at in address_tuples]
     elif isinstance(addr, (list, set)):
-        return [parse_address(a, encoding, errors) for a in addr]
+        return [parse_address(a) for a in addr]
     else:
-        raise ValueError('addr should be a str, unicode, tuple, list or set')
+        raise ValueError('addr should be a str, tuple, list or set')
