@@ -2,6 +2,12 @@
 import functools
 import os
 
+try:
+    import markdown as markdown_module
+    GOT_MARKDOWN = True
+except ImportError:
+    GOT_MARKDOWN = False
+
 from .config import load
 from .construct import construct
 from .send import send_message
@@ -13,6 +19,7 @@ CONFIG_PATH = os.path.expanduser(os.environ.get('POSTINO_CONFIG', '~/.postino'))
 def postino_raw(
         text='',
         html='',
+        markdown='',
         subject='',
         to=[],
         cc=[],
@@ -23,6 +30,13 @@ def postino_raw(
         mode=None,
         login=None,
         password=None):
+
+    if markdown:
+        text = markdown
+        if GOT_MARKDOWN:
+            html = markdown_module.markdown(markdown)
+        else:
+            html = ''
 
     message, fromline, recipients = construct(
         text=text,

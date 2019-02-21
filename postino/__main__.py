@@ -1,5 +1,6 @@
 import argparse
 
+from . import GOT_MARKDOWN
 from . import PostinoError
 from . import address
 from . import postino
@@ -30,6 +31,14 @@ def get_parser():
             dest='style',
             const='html',
             help='send html email')
+
+    if GOT_MARKDOWN:
+        parser.add_argument(
+                '--markdown', '--md',
+                action='store_const',
+                dest='style',
+                const='markdown',
+                help='send html email converting input using markdown')
 
     parser.add_argument(
             '--subject', '-s',
@@ -75,19 +84,25 @@ def main():
             # subject provided on command line
             subject = args.subject
 
+        text = None
+        html = None
+        markdown = None
+
         if args.style == 'html':
-            text = None
             html = '\n'.join(content)
+        elif args.style == 'markdown':
+            markdown = '\n'.join(content)
         else:
             text = '\n'.join(content)
-            html = None
 
         postino(text=text,
                 html=html,
+                markdown=markdown,
                 subject=subject,
                 to=args.recipient,
                 cc=args.cc,
                 bcc=args.bcc)
+
     except PostinoError as e:
         raise SystemExit(str(e))
     except KeyboardInterrupt:
